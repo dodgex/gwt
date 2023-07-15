@@ -80,6 +80,10 @@
     <pathelement location="${gwt.tools.lib}/javax/validation/validation-api-1.0.0.GA.jar"/>
     <pathelement location="${gwt.tools.lib}/javax/validation/validation-api-1.0.0.GA-sources.jar"/>
     <pathelement
+        location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-8.0.1.Final.jar"/>
+    <pathelement
+        location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-8.0.1.Final-sources.jar"/>
+    <pathelement
         location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-4.1.0.Final.jar"/>
     <pathelement
         location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-4.1.0.Final-sources.jar"/>
@@ -88,9 +92,9 @@
     <pathelement
         location="${gwt.tools.lib}/streamhtmlparser/streamhtmlparser-jsilver-r10/streamhtmlparser-jsilver-r10-1.5-rebased.jar"/>
     <!-- TCK jars -->
-    <pathelement
-        location="${gwt.tools.lib}/hibernate/validator/tck/jsr303-tck-1.0.3.GA-sources.jar"/>
-    <pathelement location="${gwt.tools.lib}/hibernate/validator/tck/jsr303-tck-1.0.3.GA.jar"/>
+<!--    <pathelement-->
+<!--        location="${gwt.tools.lib}/hibernate/validator/tck/jsr303-tck-1.0.3.GA-sources.jar"/>-->
+<!--    <pathelement location="${gwt.tools.lib}/hibernate/validator/tck/jsr303-tck-1.0.3.GA.jar"/>-->
     <pathelement
         location="${gwt.tools.lib}/jboss/test-audit/jboss-test-audit-api-1.0.0-sources.jar"/>
     <pathelement location="${gwt.tools.lib}/jboss/test-audit/jboss-test-audit-api-1.0.0.jar"/>
@@ -152,6 +156,7 @@
         <filterchain>
           <tokenfilter>
             <replacestring from="javax.servlet" to="jakarta.servlet"/>
+            <replacestring from="javax.validation" to="jakarta.validation"/>
           </tokenfilter>
         </filterchain>
       </copy>
@@ -249,6 +254,9 @@
           <file name="ReflectiveServiceLayer.java"/>
           <file name="RequestFactoryJarExtractor.java"/>
           <file name="RequestFactoryServlet.java"/>
+          <file name="ServiceLayerCache.java"/>
+          <file name="ServiceLayerDecorator.java"/>
+          <file name="ServiceLayer.java"/>
           <file name="ReportableException.java"/>
           <file name="RequestState.java"/>
           <file name="Resolver.java"/>
@@ -273,6 +281,169 @@
       <replace dir="${project.build}/jakarta-src" token="com.google.gwt.user.server.rpc.XsrfProtect" value="com.google.gwt.user.server.rpc.jakarta.XsrfProtect"/>
       <replace dir="${project.build}/jakarta-src" token="com.google.web.bindery.requestfactory.server.Logging" value="com.google.web.bindery.requestfactory.server.jakarta.Logging"/>
       <replace dir="${project.build}/jakarta-src" token="com.google.web.bindery.requestfactory.server.SimpleRequestProcessor" value="com.google.web.bindery.requestfactory.server.jakarta.SimpleRequestProcessor"/>
+
+      <!-- Inject Jakarta Code into AbstractRequestContext -->
+      <replace file="${project.build}/jakarta-src/com/google/web/bindery/requestfactory/shared/impl/AbstractRequestContext.java"
+               token="return messageTemplate;"
+               value="return messageTemplate/**/; }
+    @Override public &lt;U&gt; U unwrap(Class&lt;U&gt; type) { throw new jakarta.validation.ValidationException(); }
+    @Override public Object getExecutableReturnValue() { return null; }
+    @Override public Object[] getExecutableParameters() { return new Object[0];"/>
+
+
+      <!-- Inject Jakarta Code into Gwt Validation Code -->
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/client/spi/GwtConfigurationState.java"
+               token="&quot;GWT Validation does not support getMappingStreams&quot;);"
+               value="&quot;GWT Validation does not support getMappingStreams&quot;)/**/; }
+   @Override public Set&lt;jakarta.validation.valueextraction.ValueExtractor&lt;?&gt;&gt; getValueExtractors() { return java.util.Collections.emptySet(); }
+   @Override public jakarta.validation.ParameterNameProvider getParameterNameProvider() { return null; }
+   @Override public jakarta.validation.ClockProvider getClockProvider() { return null;"/>
+
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/client/impl/GwtConfiguration.java"
+               token="&quot;GWT does not support InputStreams&quot;);"
+               value="&quot;GWT does not support InputStreams&quot;)/**/; }
+  @Override public BaseGwtConfiguration parameterNameProvider(jakarta.validation.ParameterNameProvider parameterNameProvider) { return this; }
+  @Override public BaseGwtConfiguration clockProvider(jakarta.validation.ClockProvider clockProvider) { return this; }
+  @Override public BaseGwtConfiguration addValueExtractor(jakarta.validation.valueextraction.ValueExtractor&lt;?&gt; extractor) { return this; }
+  @Override public jakarta.validation.ParameterNameProvider getDefaultParameterNameProvider() { return null; }
+  @Override public jakarta.validation.ClockProvider getDefaultClockProvider() { return null; }
+  @Override public jakarta.validation.BootstrapConfiguration getBootstrapConfiguration() { return null;
+  "/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/client/impl/ConstraintViolationImpl.java"
+               token="return leafBean;"
+               value="return leafBean/**/; }
+  @Override public Object[] getExecutableParameters() { return new Object[0]; }
+  @Override public Object getExecutableReturnValue() { return null; }
+  @Override public &lt;U&gt; U unwrap(Class&lt;U&gt; type) { return null;
+  "/>
+
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/client/impl/ConstraintValidatorContextImpl.java"
+               token="return violations;"
+               value="return violations/**/; }
+  @Override public &lt;U&gt; U unwrap(Class&lt;U&gt; type) { return null; }
+  @Override public jakarta.validation.ClockProvider getClockProvider() { return null;
+  "/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/client/GwtConstraintValidatorFactory.java"
+               token="+ &quot; use GWT.create instead&quot;);"
+               value="+ &quot; use GWT.create instead&quot;)/**/; }
+    @Override public void releaseInstance(ConstraintValidator&lt;?, ?&gt; instance) {
+"/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/client/impl/ConstraintValidatorContextImpl.java"
+               token="private String messageTemplate;"
+               value="private String messageTemplate/**/;
+    @Override public jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderCustomizableContext addPropertyNode(String name) { return null; }
+    @Override public jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder.LeafNodeBuilderCustomizableContext addBeanNode() { return null; }
+    @Override public jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder.ContainerElementNodeBuilderCustomizableContext addContainerElementNode(String name, Class&lt;?&gt; containerType, Integer typeArgumentIndex) { return null; }
+    @Override public jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderDefinedContext addParameterNode(int index) { return null; }
+  "/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/client/impl/ConstraintValidatorContextImpl.java"
+               token="return parent.context;"
+               value="return parent.context/**/; }
+    @Override public jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderCustomizableContext addPropertyNode(String name) { return null; }
+    @Override public jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder.LeafNodeBuilderCustomizableContext addBeanNode() { return null; }
+    @Override public jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder.ContainerElementNodeBuilderCustomizableContext addContainerElementNode(String name, Class&lt;?&gt; containerType, Integer typeArgumentIndex) { return null;
+  "/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/client/impl/ConstraintValidatorContextImpl.java"
+               token="path.appendKey(null, key));"
+               value="path.appendKey(null, key))/**/; }
+    @Override public jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderCustomizableContext addPropertyNode(String name) { return null; }
+    @Override public jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder.LeafNodeBuilderCustomizableContext addBeanNode() { return null; }
+    @Override public jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder.ContainerElementNodeBuilderCustomizableContext addContainerElementNode(String name, Class&lt;?&gt; containerType, Integer typeArgumentIndex) { return null;
+  "/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/client/impl/ConstraintValidatorContextImpl.java"
+               token="return new NodeContextBuilderImpl(path, messageTemplate, parent);"
+               value="return new NodeContextBuilderImpl(path, messageTemplate, parent)/**/; }
+    @Override public NodeBuilderCustomizableContext addPropertyNode(String name) { return null; }
+    @Override public jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder.LeafNodeBuilderCustomizableContext addBeanNode() { return null; }
+    @Override public jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder.ContainerElementNodeBuilderCustomizableContext addContainerElementNode(String name, Class&lt;?&gt; containerType, Integer typeArgumentIndex) { return null; }
+    @Override public NodeBuilderCustomizableContext inContainer(Class&lt;?&gt; containerClass, Integer typeArgumentIndex) { return null;
+"/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/client/impl/ConstraintDescriptorImpl.java"
+               token="String.valueOf(annotation);"
+               value="String.valueOf(annotation)/**/; }
+  @Override public jakarta.validation.metadata.ValidateUnwrappedValue getValueUnwrapping() { return null; }
+  @Override public &lt;U&gt; U unwrap(Class&lt;U&gt; type) { return null; }
+  @Override public jakarta.validation.ConstraintTarget getValidationAppliesTo() { return null; }
+  @Override public String getMessageTemplate() { return null;
+"/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/client/impl/PropertyDescriptorImpl.java"
+               token="return cascaded;"
+               value="return cascaded/**/; }
+    @Override public Set&lt;jakarta.validation.metadata.GroupConversionDescriptor&gt; getGroupConversions() { return null; }
+    @Override public Set&lt;jakarta.validation.metadata.ContainerElementTypeDescriptor&gt; getConstrainedContainerElementTypes() { return null;
+"/>
+
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/client/impl/GwtValidatorContext.java"
+               token="return validator;"
+               value="return validator/**/; }
+    @Override public ValidatorContext parameterNameProvider(jakarta.validation.ParameterNameProvider parameterNameProvider) { return this; }
+    @Override public ValidatorContext clockProvider(jakarta.validation.ClockProvider clockProvider) { return this; }
+    @Override public ValidatorContext addValueExtractor(jakarta.validation.valueextraction.ValueExtractor&lt;?&gt; extractor) { return this;
+"/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/client/impl/GwtBeanDescriptorImpl.java"
+               token="this.validationGroupsMetadata = validationGroupsMetadata;"
+               value="this.validationGroupsMetadata = validationGroupsMetadata/**/; }
+  @Override public jakarta.validation.metadata.MethodDescriptor getConstraintsForMethod(String methodName, Class&lt;?&gt;... parameterTypes) { return null; }
+  @Override public Set&lt;jakarta.validation.metadata.MethodDescriptor&gt; getConstrainedMethods(jakarta.validation.metadata.MethodType methodType, jakarta.validation.metadata.MethodType... methodTypes) { return null; }
+  @Override public jakarta.validation.metadata.ConstructorDescriptor getConstraintsForConstructor(Class&lt;?&gt;... parameterTypes) { return null; }
+  @Override public Set&lt;jakarta.validation.metadata.ConstructorDescriptor&gt; getConstrainedConstructors() { return null;
+"/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/client/impl/MessageInterpolatorContextImpl.java"
+               token="return value;"
+               value="return value/**/; }
+  @Override public &lt;U&gt; U unwrap(Class&lt;U&gt; type) { return null;
+"/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/client/impl/NodeImpl.java"
+               token="return name;"
+               value="return name/**/; }
+  @Override public jakarta.validation.ElementKind getKind() { return null; }
+  @Override public &lt;T extends jakarta.validation.Path.Node&gt; T as(Class&lt;T&gt; nodeType) { return null;
+"/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/rebind/GwtSpecificValidatorCreator.java"
+               token=".PropertyDescriptor;"
+               value=".PropertyDescriptor/**/;
+import org.hibernate.validator.internal.metadata.location.ConstraintLocation;"/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/rebind/GwtSpecificValidatorCreator.java"
+               token="org.hibernate.validator.metadata.ConstraintOrigin"
+               value="org.hibernate.validator.internal.metadata.core.ConstraintOrigin"/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/rebind/GwtSpecificValidatorCreator.java"
+               token="org.hibernate.validator.metadata.ConstraintDescriptorImpl"
+               value="org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptorImpl"/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/rebind/GwtSpecificValidatorCreator.java"
+               token="org.hibernate.validator.metadata.ConstraintDescriptorImpl"
+               value="org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptorImpl"/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/rebind/GwtSpecificValidatorCreator.java"
+               token="constraintHibernate.getElementType()"
+               value="constraintHibernate.getConstraintLocationKind().getElementType()"/>
+      <replace file="${project.build}/jakarta-src/com/google/gwt/validation/rebind/GwtSpecificValidatorCreator.java"
+               token="writeConstraintDescriptor(sw, constraint, constraintHibernate.getElementType(),"
+               value="writeConstraintDescriptor(sw, constraint, constraintHibernate.getConstraintLocationKind().getElementType(),"/>
+
+      <!-- TODO move hibernate sources to correct package(s)? -->
+      <replace file="${project.build}/jakarta-src/org/hibernate/validator/engine/ValidationSupport.java"
+               token="import com.google.gwt.user.client.rpc.IsSerializable;"
+               value="import com.google.gwt.user.client.rpc.IsSerializable/**/;
+import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
+import org.hibernate.validator.internal.engine.path.PathImpl;
+"/>
+      <replace file="${project.build}/jakarta-src/org/hibernate/validator/engine/PathImpl_CustomFieldSerializer.java"
+               token="import com.google.gwt.user.client.rpc.SerializationStreamWriter;"
+               value="import com.google.gwt.user.client.rpc.SerializationStreamWriter/**/;
+import org.hibernate.validator.internal.engine.path.PathImpl;
+"/>
+
+      <replace file="${project.build}/jakarta-src/org/hibernate/validator/engine/ConstraintViolationImpl_CustomFieldSerializer.java"
+               token=".ConstraintDescriptor;"
+               value=".ConstraintDescriptor/**/;
+import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
+"/>
+      <replace file="${project.build}/jakarta-src/org/hibernate/validator/engine/ConstraintViolationImpl_CustomFieldSerializer.java"
+               token="return new ConstraintViolationImpl&lt;Object&gt;(messageTemplate,"
+               value="return (ConstraintViolationImpl) ConstraintViolationImpl.forBeanValidation(messageTemplate,new java.util.HashMap&lt;&gt;(),new java.util.HashMap&lt;&gt;(),"/>
+
+
+
+
       <gwt.javac
               srcdir="${project.build}/jakarta-src"
               destdir="${javac.out}-jakarta"
@@ -289,20 +460,23 @@
         <classpath>
           <pathelement location="${gwt.tools.lib}/gss/2015-11-04/closure-stylesheets-library-20151104-rebased.jar"/>
           <!--        <pathelement location="${gwt.tools.lib}/tomcat/tomcat-servlet-api-8.0.28.jar"/>-->
-          <pathelement location="${gwt.tools.lib}/jakarta-servlet/jakarta.servlet-api-5.0.0/jakarta.servlet-api-5.0.0.jar" />
+<!--          <pathelement location="${gwt.tools.lib}/jakarta-servlet/jakarta.servlet-api-5.0.0/jakarta.servlet-api-5.0.0.jar" />-->
+          <pathelement location="${gwt.tools.lib}/jakarta-servlet/jakarta.servlet-api-6.0.0/jakarta.servlet-api-6.0.0.jar" />
           <pathelement location="${gwt.tools.lib}/junit/junit-4.8.2.jar"/>
           <pathelement location="${gwt.tools.lib}/selenium/selenium-java-client-driver.jar"/>
           <pathelement location="${gwt.tools.lib}/w3c/sac/sac-1.3.jar"/>
           <pathelement location="${gwt.tools.lib}/w3c/flute/flute-1.3-gg2.jar"/>
-          <pathelement location="${gwt.tools.lib}/javax/validation/validation-api-1.0.0.GA.jar"/>
+          <pathelement location="${gwt.tools.lib}/jakarta-validation/jakarta.validation-api-3.0.2/jakarta.validation-api-3.0.2.jar"/>
+<!--          <pathelement location="${gwt.tools.lib}/javax/validation/validation-api-1.0.0.GA.jar"/>-->
           <!-- The source is included so validation is available from client code -->
           <pathelement
-                  location="${gwt.tools.lib}/javax/validation/validation-api-1.0.0.GA-sources.jar"/>
+                  location="${gwt.tools.lib}/jakarta-validation/jakarta.validation-api-3.0.2/jakarta.validation-api-3.0.2-sources.jar"/>
+<!--                  location="${gwt.tools.lib}/javax/validation/validation-api-1.0.0.GA-sources.jar"/>-->
           <!-- Hibernate is included until we can provide the super source as an third party jar" -->
           <pathelement
-                  location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-4.1.0.Final.jar"/>
+                  location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-8.0.1.Final.jar"/>
           <pathelement
-                  location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-4.1.0.Final-sources.jar"/>
+                  location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-8.0.1.Final-sources.jar"/>
           <pathelement
                   location="${gwt.tools.lib}/streamhtmlparser/streamhtmlparser-jsilver-r10/streamhtmlparser-jsilver-r10-1.5-rebased.jar"/>
           <pathelement

@@ -90,7 +90,10 @@
     <replace dir="${project.build}/javadoc-src" token="package com.google.gwt.user.server;" value="package com.google.gwt.user.server.jakarta;"/>
     <replace dir="${project.build}/javadoc-src" token="package com.google.gwt.core.server" value="package com.google.gwt.core.server.jakarta"/>
     <replace dir="${project.build}/javadoc-src" token="package com.google.gwt.logging.server" value="package com.google.gwt.logging.server.jakarta"/>
-    <replace dir="${project.build}/javadoc-src" token="package com.google.gwt.examples.rpc.server" value="package com.google.gwt.examples.rpc.server.jakarta"/>
+    <replaceregexp match="package com\.google\.gwt\.examples\.rpc\.server(?!\.jakarta)"
+                   replace="package com.google.gwt.examples.rpc.server.jakarta">
+      <fileset dir="${project.build}/javadoc-src"/>
+    </replaceregexp>
     <replace dir="${project.build}/javadoc-src" token="package com.google.web.bindery.requestfactory.server" value="package com.google.web.bindery.requestfactory.server.jakarta"/>
     <replace dir="${project.build}/javadoc-src" token="com.google.gwt.examples.rpc.server.AdvancedExample" value="com.google.gwt.examples.rpc.server.jakarta.AdvancedExample"/>
     <replace dir="${project.build}/javadoc-src" token="com.google.gwt.user.server.rpc.RemoteServiceServlet" value="com.google.gwt.user.server.rpc.jakarta.RemoteServiceServlet"/>

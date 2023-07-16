@@ -275,6 +275,12 @@
           </tokenfilter>
         </filterchain>
       </move>
+      <move todir="${project.build}/jakarta-src/jakarta/validation">
+        <filelist dir="${project.build}/jakarta-src/javax/validation">
+          <file name="ConstraintViolationException_CustomFieldSerializer.java"/>
+          <file name="Validation.gwt.xml"/>
+        </filelist>
+      </move>
       <replace dir="${project.build}/jakarta-src" token="com.google.gwt.core.server.ServerGwtBridge" value="com.google.gwt.core.server.jakarta.ServerGwtBridge"/>
       <replace dir="${project.build}/jakarta-src" token="com.google.gwt.user.server.rpc.RPC;" value="com.google.gwt.user.server.rpc.jakarta.RPC;"/>
       <replace dir="${project.build}/jakarta-src" token="com.google.gwt.user.server.rpc.SerializationPolicy" value="com.google.gwt.user.server.rpc.jakarta.SerializationPolicy"/>

@@ -80,9 +80,9 @@
     <pathelement location="${gwt.tools.lib}/javax/validation/validation-api-1.0.0.GA.jar"/>
     <pathelement location="${gwt.tools.lib}/javax/validation/validation-api-1.0.0.GA-sources.jar"/>
     <pathelement
-        location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-8.0.1.Final.jar"/>
+        location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-7.0.5.Final.jar"/>
     <pathelement
-        location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-8.0.1.Final-sources.jar"/>
+        location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-7.0.5.Final-sources.jar"/>
     <pathelement
         location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-4.1.0.Final.jar"/>
     <pathelement
@@ -476,9 +476,9 @@ import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
                   location="${gwt.tools.lib}/jakarta/validation/jakarta.validation-api-3.0.2/jakarta.validation-api-3.0.2-sources.jar"/>
           <!-- Hibernate is included until we can provide the super source as an third party jar" -->
           <pathelement
-                  location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-8.0.1.Final.jar"/>
+                  location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-7.0.5.Final.jar"/>
           <pathelement
-                  location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-8.0.1.Final-sources.jar"/>
+                  location="${gwt.tools.lib}/hibernate/validator/hibernate-validator-7.0.5.Final-sources.jar"/>
           <pathelement
                   location="${gwt.tools.lib}/streamhtmlparser/streamhtmlparser-jsilver-r10/streamhtmlparser-jsilver-r10-1.5-rebased.jar"/>
           <pathelement
